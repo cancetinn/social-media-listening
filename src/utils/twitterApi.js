@@ -3,8 +3,6 @@ import axios from 'axios';
 const clientId = process.env.TWITTER_CLIENT_ID;
 const clientSecret = process.env.TWITTER_CLIENT_SECRET;
 
-const encodedCredentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-
 const getAccessToken = async () => {
     try {
         const response = await axios.post(
@@ -12,7 +10,7 @@ const getAccessToken = async () => {
             'grant_type=client_credentials',
             {
                 headers: {
-                    'Authorization': `Basic ${encodedCredentials}`,
+                    'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
                 }
             }
@@ -27,19 +25,18 @@ const getAccessToken = async () => {
 export const fetchTweets = async (query, startTime, endTime) => {
     const accessToken = await getAccessToken();
     try {
-        const response = await axios.get('https://api.twitter.com/2/tweets/search/recent', {
+        const response = await axios.get('https://api.twitter.com/1.1/search/tweets.json', {
             params: {
-                query,
-                start_time: startTime,
-                end_time: endTime,
-                max_results: 10,
-                tweet_fields: 'created_at,public_metrics'
+                q: query,
+                count: 10,
+                since: startTime,
+                until: endTime
             },
             headers: {
-                'Authorization': `Bearer ${accessToken}`
+                'Authorization': `OAuth ${accessToken}`
             }
         });
-        return response.data.data;
+        return response.data.statuses;
     } catch (error) {
         console.error('Error fetching tweets:', error.response?.data || error.message);
         throw error;
