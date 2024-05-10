@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import axios from 'axios';
 
 const clientId = process.env.TWITTER_CLIENT_ID;
-const clientSecret = process.env.TWITTER_CLIENT_SECRET;
 const redirectUri = process.env.TWITTER_REDIRECT_URI;
 
 function base64URLEncode(str) {
@@ -27,18 +26,20 @@ export const getAuthorizationUrl = (codeChallenge) => {
 
 export const getAccessToken = async (code, codeVerifier) => {
     try {
-        const response = await axios.post('https://api.twitter.com/2/oauth2/token', {
-            client_id: clientId,
-            code,
-            redirect_uri: redirectUri,
-            grant_type: 'authorization_code',
-            code_verifier: codeVerifier
-        }, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+        const response = await axios.post('https://api.twitter.com/2/oauth2/token',
+            new URLSearchParams({
+                client_id: clientId,
+                code,
+                redirect_uri: redirectUri,
+                grant_type: 'authorization_code',
+                code_verifier: codeVerifier
+            }).toString(),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
             }
-        });
-
+        );
         return response.data.access_token;
     } catch (error) {
         console.error('Error fetching access token:', error.response?.data || error.message);

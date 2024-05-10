@@ -14,6 +14,7 @@
     "crypto": "^1.0.1",
     "moment": "^2.30.1",
     "next": "14.2.3",
+    "next-session": "^4.0.5",
     "qs": "^6.12.1",
     "react": "^18",
     "react-dom": "^18"
