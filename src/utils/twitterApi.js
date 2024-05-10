@@ -1,20 +1,19 @@
 import axios from 'axios';
-import qs from 'qs';
-import base64 from 'base-64';
 
 const clientId = process.env.TWITTER_CLIENT_ID;
 const clientSecret = process.env.TWITTER_CLIENT_SECRET;
-const encodedCredentials = base64.encode(`${clientId}:${clientSecret}`);
+
+const encodedCredentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
 const getAccessToken = async () => {
     try {
         const response = await axios.post(
             'https://api.twitter.com/oauth2/token',
-            qs.stringify({ grant_type: 'client_credentials' }),
+            'grant_type=client_credentials',
             {
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': `Basic ${encodedCredentials}`
+                    'Authorization': `Basic ${encodedCredentials}`,
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
                 }
             }
         );
