@@ -10,7 +10,8 @@ export default async function handler(req, res) {
         res.status(500).json({
             error: 'Error fetching tweets',
             details: error.response?.data || error.message,
-            hint: 'Ensure your Twitter API credentials have the required access level and are attached to a project.'
+            hint: 'Ensure your Twitter API credentials have the required access level and are attached to a project. Visit https://developer.twitter.com/en/docs/projects/overview for more details.'
         });
     }
 }
+
